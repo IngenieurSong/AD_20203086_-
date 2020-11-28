@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import *
+from PyQt5.QtGui import QIcon
 import sys
 from player import *
 from imgToText import Ocr
@@ -20,6 +21,8 @@ class MainWindow(QWidget):
         self.initUI()
 
     def initUI(self):  # issue. 버튼 만들 때 중복 줄이기
+        
+        self.setWindowIcon(QIcon('icon.jpg'))  # icon 설정
 
         vbox = QVBoxLayout()
 
