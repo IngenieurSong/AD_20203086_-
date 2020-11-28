@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon
 import sys
+import os.path
 from player import *
 from imgToText import Ocr
 
@@ -126,25 +127,30 @@ class MainWindow(QWidget):
     def clearText(self):  # display 내의 모든 Text를 삭제하는 기능
         self.display.clear()  # display 내의 모든 Text를 삭제
 
-    def newText(self):  # issue. 파일 이름이 잘못 입력되었을 경우 예외처리
+    def newText(self):
         fname = input("Enter File Name : ")  # gui 안에서 입력받는 방법은?
+        
+        if os.path.isfile(fname) == True:
+            # OCR 기능 실행
+            ocr = Ocr(fname)
+            ocr.ocr_tesseract()
+            ocr.textToSpeech()
+            self.fileText = ocr.textResult
 
-        # OCR 기능 실행
-        ocr = Ocr(fname)
-        ocr.ocr_tesseract()
-        ocr.textToSpeech()
-        self.fileText = ocr.textResult
+            self.display.append(self.fileText)
 
-        self.display.append(self.fileText)
+            # OCR 결과로 산출된 음성 파일을 Sound List에 추가
+            files = ('%s.wav' %fname, None)
+            row = self.table.rowCount()
+            self.table.setRowCount(row + 1)
+            self.table.setItem(row, 0, QTableWidgetItem(files[0]))
 
-        # OCR 결과로 산출된 음성 파일을 Sound List에 추가
-        files = ('%s.wav' %fname, None)
-        row = self.table.rowCount()
-        self.table.setRowCount(row + 1)
-        self.table.setItem(row, 0, QTableWidgetItem(files[0]))
-
-        self.createPlaylist()
-
+            self.createPlaylist()
+            
+        else:
+            print('Try Again')
+            self.newText()
+            
     def tableChanged(self):
         self.selectedList.clear()
         for item in self.table.selectedIndexes():
