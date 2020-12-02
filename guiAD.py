@@ -4,6 +4,7 @@ import sys
 import os.path
 from player import *
 from imgToText import Ocr
+import scanPro
 
 QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 
@@ -132,7 +133,8 @@ class MainWindow(QWidget):
         
         if os.path.isfile(fname) == True:
             # OCR 기능 실행
-            ocr = Ocr(fname)
+            scanPro.adaptive_threshold(fname)
+            ocr = Ocr('%s_gray.jpg' %fname)
             ocr.ocr_tesseract()
             ocr.textToSpeech()
             self.fileText = ocr.textResult
